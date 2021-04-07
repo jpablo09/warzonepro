@@ -1,21 +1,11 @@
-const fortniteClassId = 21216;
+const warzoneClassId = 21626;
 
 const interestingFeatures = [
-  'counters',
-  'death',
-  'items',
-  'kill',
-  'killed',
-  'killer',
-  'location',
+  'game_info',
   'match_info',
-  'match',
-  'me',
-  'phase',
-  'rank',
-  'revived',
-  'roster',
-  'team'
+  'kill',
+  'death',
+  'gep_internal'
 ];
 
 const windowNames = {
@@ -28,7 +18,7 @@ const hotkeys = {
 };
 
 export {
-  fortniteClassId,
+  warzoneClassId,
   interestingFeatures,
   windowNames,
   hotkeys

@@ -3,7 +3,7 @@ import {
   OWGamesEvents,
   OWHotkeys
 } from "@overwolf/overwolf-api-ts";
-import { interestingFeatures, hotkeys, windowNames, fortniteClassId } from "../consts";
+import { interestingFeatures, hotkeys, windowNames, warzoneClassId } from "../consts";
 import WindowState = overwolf.windows.WindowStateEx;
 
 // The window displayed in-game while a Fortnite game is running.
@@ -13,7 +13,7 @@ import WindowState = overwolf.windows.WindowStateEx;
 // Like the background window, it also implements the Singleton design pattern.
 class InGame extends AppWindow {
   private static _instance: InGame;
-  private _fortniteGameEventsListener: OWGamesEvents;
+  private _wzGameEventsListener: OWGamesEvents;
   private _eventsLog: HTMLElement;
   private _infoLog: HTMLElement;
 
@@ -26,7 +26,7 @@ class InGame extends AppWindow {
     this.setToggleHotkeyBehavior();
     this.setToggleHotkeyText();
 
-    this._fortniteGameEventsListener = new OWGamesEvents({
+    this._wzGameEventsListener = new OWGamesEvents({
       onInfoUpdates: this.onInfoUpdates.bind(this),
       onNewEvents: this.onNewEvents.bind(this)
     },
@@ -42,7 +42,7 @@ class InGame extends AppWindow {
   }
 
   public run() {
-    this._fortniteGameEventsListener.start();
+    this._wzGameEventsListener.start();
   }
 
   private onInfoUpdates(info) {
@@ -52,11 +52,9 @@ class InGame extends AppWindow {
   // Special events will be highlighted in the event log
   private onNewEvents(e) {
     const shouldHighlight = e.events.some(event => {
-      switch (event.name) {
+      switch (event.name ) {
         case 'kill':
         case 'death':
-        case 'assist':
-        case 'level':
         case 'matchStart':
         case 'matchEnd':
           return true;
@@ -69,7 +67,7 @@ class InGame extends AppWindow {
 
   // Displays the toggle minimize/restore hotkey in the window header
   private async setToggleHotkeyText() {
-    const hotkeyText = await OWHotkeys.getHotkeyText(hotkeys.toggle, fortniteClassId);
+    const hotkeyText = await OWHotkeys.getHotkeyText(hotkeys.toggle, warzoneClassId);
     const hotkeyElem = document.getElementById('hotkey');
     hotkeyElem.textContent = hotkeyText;
   }
