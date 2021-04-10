@@ -6,7 +6,7 @@ import {
 import { interestingFeatures, hotkeys, windowNames, warzoneClassId } from "../consts";
 import WindowState = overwolf.windows.WindowStateEx;
 
-// The window displayed in-game while a Fortnite game is running.
+// The window displayed in-game while a Warzone game is running.
 // It listens to all info events and to the game events listed in the consts.ts file
 // and writes them to the relevant log using <pre> tags.
 // The window also sets up Ctrl+F as the minimize/restore hotkey.
@@ -92,10 +92,62 @@ class InGame extends AppWindow {
 
   // Appends a new line to the specified log
   private logLine(log: HTMLElement, data, highlight) {
-    console.log(`${log.id}:`);
-    console.log(data);
+
     const line = document.createElement('pre');
     line.textContent = JSON.stringify(data);
+    const {game_info, gep_internal, match_info} = data;
+
+    if(gep_internal) {
+
+      Object.keys(gep_internal).map((key, index) => {
+        if (typeof (gep_internal[key]) === 'object') {
+          Object.keys(gep_internal[key]).map(key2 => {
+            console.log(`${key2}: ${gep_internal[key][key2]}`)
+          })
+        } else {
+          console.log(`${key}: ${gep_internal[key]}`);
+        }
+      });
+
+    }
+
+    if(game_info) {
+
+      Object.keys(game_info).map((key, index) => {
+        if (typeof (game_info[key]) === 'object') {
+          Object.keys(game_info[key]).map(key2 => {
+            console.log(`${key2}: ${game_info[key][key2]}`)
+          })
+        } else {
+          console.log(`${key}: ${game_info[key]}`);
+        }
+      });
+    }
+
+
+
+
+    if(match_info) {
+
+      Object.keys(match_info).map((key, index) => {
+
+        if (key.includes("roster")) {
+          var rosterData = JSON.parse(match_info[key]);
+          Object.keys(rosterData).map(key2 => {
+            console.log(`${key2}: ${rosterData[key2]}`)
+          })
+        } else {
+          console.log(`${key}: ${match_info[key]}`);
+        }
+      });
+
+    }
+
+
+
+
+
+
 
     if (highlight) {
       line.className = 'highlight';
