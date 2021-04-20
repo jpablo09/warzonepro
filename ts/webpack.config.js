@@ -49,5 +49,8 @@ module.exports = env => ({
             chunks: ['in_game']
         }),
         new OverwolfPlugin(env)
-    ]
+    ],
+    externals:[{
+        xmlhttprequest: '{XMLHttpRequest:XMLHttpRequest}'
+    }]
 })
