@@ -5,6 +5,8 @@ import {
 } from "@overwolf/overwolf-api-ts";
 import { interestingFeatures, hotkeys, windowNames, warzoneClassId } from "../consts";
 import WindowState = overwolf.windows.WindowStateEx;
+declare function require(name:string);
+const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 // The window displayed in-game while a Warzone game is running.
 // It listens to all info events and to the game events listed in the consts.ts file
@@ -92,6 +94,7 @@ class InGame extends AppWindow {
 
   // Appends a new line to the specified log
   private logLine(log: HTMLElement, data, highlight) {
+    const playerKey = new Set();
 
     const line = document.createElement('pre');
     line.textContent = JSON.stringify(data);
@@ -134,7 +137,31 @@ class InGame extends AppWindow {
         if (key.includes("roster")) {
           var rosterData = JSON.parse(match_info[key]);
           Object.keys(rosterData).map(key2 => {
-            console.log(`${key2}: ${rosterData[key2]}`)
+            //console.log(`${key2}: ${rosterData[key2]}`);
+            if(`${key2}` === "player") {
+              var playerId = `${rosterData[key2]}`;
+              if (!(playerKey.has(playerId))){
+                playerKey.add(playerId);
+                //console.log("player id: " , playerId);
+                const xhr = new XMLHttpRequest();
+                const url = "https://m7xiwxzju9.execute-api.us-east-2.amazonaws.com/insert_randoms/randominfo";
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                //xhr.setRequestHeader("Access-Control-Allow-Origin", "https://content.overwolf.com/anoahjhemlbnmhkljlgbmnfflpnhgjpmfjnhdfoe/");
+                //xhr.setRequestHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+                //xhr.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+                xhr.onreadystatechange = function () {
+                  if (xhr.readyState === 4 && xhr.status === 200) {
+                    var json = JSON.parse(xhr.responseText);
+                    console.log("xttpJson: " , json);
+                  }
+                };
+                const data = JSON.stringify({"randPlayerId": playerId});
+                console.log("data: " , data);
+                xhr.send(data);
+
+              }
+            }
           })
         } else {
           console.log(`${key}: ${match_info[key]}`);
